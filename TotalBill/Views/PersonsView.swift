@@ -32,31 +32,35 @@ class PersonsView: UIView {
     
     lazy var minusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("-", for: .normal)
+        button.setImage(UIImage(systemName: "minus"), for: .normal)
         button.tintColor = .black
-        button.titleLabel?.font = UIFont(name: "Avenir Next", size: 80)
+        button.isEnabled = false
+        button.addTarget(self, action: #selector(minusButtonTapped), for: .touchUpInside)
+
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("+", for: .normal)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.tintColor = .black
-        button.titleLabel?.font = UIFont(name: "Avenir Next", size: 60)
+        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     let counterLabel: UILabel = {
         let label = UILabel()
-        label.text = "0"
+        label.text = "2"
         label.textColor = .black
         label.textAlignment = .center
         label.font = UIFont(name: "Avenir Next", size: 45)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    var counter = 2
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -68,6 +72,12 @@ class PersonsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        titleLabel.font = UIFont(name: "Avenir Next", size: frame.width / 26.7)
+        counterLabel.font = UIFont(name: "Avenir Next", size: frame.height / 2.6)
+    }
+    
     func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleLabel)
@@ -77,15 +87,31 @@ class PersonsView: UIView {
         bacgroundGrayView.addSubview(counterLabel)
     }
     
+    @objc func minusButtonTapped() {
+        counter -= 1
+        counterLabel.text = "\(counter)"
+        
+        if counter <= 2 {
+            minusButton.isEnabled = false
+        }
+    }
+    
+    @objc func plusButtonTapped() {
+        counter += 1
+        counterLabel.text = "\(counter)"
+        minusButton.isEnabled = true
+    }
+    
     func setConstrains() {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 0),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
+            titleLabel.heightAnchor.constraint(equalToConstant: 20),
     
             bacgroundGrayView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             bacgroundGrayView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             bacgroundGrayView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            bacgroundGrayView.heightAnchor.constraint(equalToConstant: 100),
+            bacgroundGrayView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0),
             
             minusButton.topAnchor.constraint(equalTo: bacgroundGrayView.topAnchor, constant: 0),
             minusButton.leadingAnchor.constraint(equalTo: bacgroundGrayView.leadingAnchor, constant: 0),
